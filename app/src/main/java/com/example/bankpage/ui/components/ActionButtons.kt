@@ -9,21 +9,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.bankpage.R
 
-/**
- * Componente de botões de ação horizontais usando os ícones definidos em Icons.kt.
- */
 @Composable
 fun ActionButtons(modifier: Modifier = Modifier) {
     val actions = listOf(
-        BankIcon("Pix", BankIcons.Pix),
-        BankIcon("Pagar", BankIcons.Pagar),
-        BankIcon("Transferir", BankIcons.Transferir),
-        BankIcon("Recarga", BankIcons.Recarga),
-        BankIcon("Empréstimo", BankIcons.Emprestimo)
+        BankIcon(stringResource(R.string.action_pix), BankIcons.Pix),
+        BankIcon(stringResource(R.string.action_pay), BankIcons.Pagar),
+        BankIcon(stringResource(R.string.action_transfer), BankIcons.Transferir),
+        BankIcon(stringResource(R.string.action_recharge), BankIcons.Recarga),
+        BankIcon(stringResource(R.string.action_loan), BankIcons.Emprestimo)
     )
 
     LazyRow(
