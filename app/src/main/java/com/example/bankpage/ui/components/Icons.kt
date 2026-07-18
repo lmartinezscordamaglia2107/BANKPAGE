@@ -14,12 +14,11 @@ data class BankIcon(
 
 /**
  * Objeto utilitário para centralizar os ícones usados no App.
- * Aqui usamos ícones do Material Design.
  */
 object BankIcons {
-    val Pix = Icons.Default.Add
-    val Pagar = Icons.Default.Payments
-    val Transferir = Icons.Default.Send
-    val Recarga = Icons.Default.Smartphone
-    val Emprestimo = Icons.Default.AccountBalanceWallet
+    val Pix: ImageVector = Icons.Default.Add
+    val Pagar: ImageVector = Icons.Default.Payments
+    val Transferir: ImageVector = Icons.Default.Send
+    val Recarga: ImageVector = Icons.Default.Smartphone
+    val Emprestimo: ImageVector = Icons.Default.AccountBalanceWallet
 }
