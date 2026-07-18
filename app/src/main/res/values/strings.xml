@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">BANKPAGE</string>
+
+    <!-- Botões de Ação -->
+    <string name="action_pix">Pix</string>
+    <string name="action_pay">Pagar</string>
+    <string name="action_transfer">Transferir</string>
+    <string name="action_recharge">Recarga</string>
+    <string name="action_loan">Empréstimo</string>
+
+    <!-- Tela Principal -->
+    <string name="label_balance">Saldo disponível</string>
+    <string name="label_credit_limit">Limite de crédito</string>
+    <string name="welcome_message">Olá, Thiago</string>
 </resources>
