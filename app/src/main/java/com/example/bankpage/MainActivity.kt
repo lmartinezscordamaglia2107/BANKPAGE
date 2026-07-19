@@ -27,6 +27,8 @@ import com.example.bankpage.data.Transaction
 import com.example.bankpage.ui.components.ActionButtons
 import com.example.bankpage.ui.components.BalanceCard
 import com.example.bankpage.ui.components.BankIcons
+import com.example.bankpage.ui.components.ExpenseCategoryChart
+import com.example.bankpage.ui.components.SavingsGoals
 import com.example.bankpage.ui.components.TransactionList
 import com.example.bankpage.ui.theme.BANKPAGETheme
 
@@ -109,6 +111,16 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         // Botões de Ação
         ActionButtons()
         
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Gráfico de Gastos (NOVO)
+        ExpenseCategoryChart()
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Metas de Poupança (NOVO)
+        SavingsGoals()
+
         Spacer(modifier = Modifier.height(24.dp))
         
         // Atividades recentes
