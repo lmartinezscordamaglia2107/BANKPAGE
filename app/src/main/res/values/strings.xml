@@ -11,6 +11,5 @@
     <!-- Tela Principal -->
     <string name="label_balance">Saldo disponível</string>
     <string name="label_credit_limit">Limite de crédito</string>
-    <string name="label_recent_activities">Atividades recentes</string>
     <string name="welcome_message">Olá, Thiago</string>
 </resources>
