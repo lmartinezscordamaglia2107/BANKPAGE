@@ -12,5 +12,15 @@
     <string name="label_balance">Saldo disponível</string>
     <string name="label_credit_limit">Limite de crédito</string>
     <string name="label_recent_activities">Atividades recentes</string>
+    <string name="label_financial_summary">Resumo Financeiro</string>
+    <string name="label_savings_goals">Metas de Poupança</string>
+    <string name="label_expense_chart">Gastos por Categoria</string>
+    <string name="label_sample_balance">R$ 2.500,80</string>
+
+    <!-- Acessibilidade -->
     <string name="welcome_message">Olá, Thiago</string>
+    <string name="desc_profile_icon">Ícone de perfil do usuário</string>
+    <string name="desc_toggle_visibility">Alternar visibilidade do saldo</string>
+    <string name="desc_hide_balance">Ocultar saldo</string>
+    <string name="desc_show_balance">Exibir saldo</string>
 </resources>

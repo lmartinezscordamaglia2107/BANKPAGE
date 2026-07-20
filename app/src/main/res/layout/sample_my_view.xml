@@ -9,33 +9,50 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="80.dp">
+            android:paddingBottom="32.dp">
 
-            <!-- Header / Saudação -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16.dp"
-                android:layout_marginTop="24.dp"
-                android:text="Olá, Thiago"
-                android:textColor="#000000"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <!-- Cartão de Saldo (Simulado em XML) -->
-            <com.google.android.material.card.MaterialCardView
+            <!-- 1. Header com Perfil -->
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16.dp"
+                android:padding="16.dp">
+
+                <TextView
+                    android:id="@+id/tv_welcome_xml"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/welcome_message"
+                    android:textColor="#000000"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/iv_profile_xml"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_account_box"
+                    android:contentDescription="@string/desc_profile_icon"
+                    app:tint="#1E1E24" />
+            </RelativeLayout>
+
+            <!-- 2. Cartão de Saldo Principal -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16.dp"
+                android:layout_marginBottom="16.dp"
                 app:cardBackgroundColor="#1E1E24"
                 app:cardCornerRadius="16.dp"
-                app:cardElevation="4.dp">
+                app:cardElevation="6.dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -46,57 +63,49 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Saldo disponível"
+                            android:text="@string/label_balance"
                             android:textColor="#808080"
                             android:textSize="14sp" />
 
                         <ImageButton
+                            android:id="@+id/btn_toggle_eye_xml"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:layout_alignParentEnd="true"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:src="@android:drawable/ic_menu_view"
-                            app:tint="#FFFFFF" />
+                            app:tint="#FFFFFF"
+                            android:contentDescription="@string/desc_toggle_visibility" />
                     </RelativeLayout>
 
                     <TextView
+                        android:id="@+id/tv_balance_value_xml"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8.dp"
-                        android:text="R$ 2.500,80"
+                        android:text="@string/label_sample_balance"
                         android:textColor="#FFFFFF"
-                        android:textSize="28sp"
+                        android:textSize="30sp"
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/tv_credit_limit_xml"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16.dp"
-                        android:text="Limite de Crédito: R$ 10.000,00"
+                        android:text="@string/label_credit_limit"
                         android:textColor="#00E676"
                         android:textSize="14sp" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </androidx.cardview.widget.CardView>
 
-            <!-- Seção de Ações -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16.dp"
-                android:layout_marginTop="8.dp"
-                android:text="Ações rápidas"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
+            <!-- 3. Botões de Ação Rápida -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12.dp"
                 android:clipToPadding="false"
                 android:paddingStart="16.dp"
                 android:paddingEnd="16.dp"
@@ -105,32 +114,141 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-                    <!-- Placeholder para botões estilo Pix, Pagar, etc -->
-                    <View android:layout_width="60dp" android:layout_height="60dp" android:background="#F3F4F6" android:layout_marginEnd="12.dp" />
-                    <View android:layout_width="60dp" android:layout_height="60dp" android:background="#F3F4F6" android:layout_marginEnd="12.dp" />
-                    <View android:layout_width="60dp" android:layout_height="60dp" android:background="#F3F4F6" android:layout_marginEnd="12.dp" />
-                    <View android:layout_width="60dp" android:layout_height="60dp" android:background="#F3F4F6" android:layout_marginEnd="12.dp" />
+                    android:orientation="horizontal"
+                    android:paddingVertical="12.dp">
+
+                    <!-- Botão Pix -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="16.dp">
+                        <ImageView
+                            android:id="@+id/iv_action_pix_xml"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:padding="16.dp"
+                            android:src="@drawable/ic_favorite"
+                            android:background="@android:drawable/btn_default"
+                            android:contentDescription="@string/action_pix"
+                            app:tint="#000000" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8.dp"
+                            android:text="@string/action_pix"
+                            android:textSize="12sp"
+                            android:textColor="#4B5563" />
+                    </LinearLayout>
+
+                    <!-- Botão Pagar -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="16.dp">
+                        <ImageView
+                            android:id="@+id/iv_action_pay_xml"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:padding="16.dp"
+                            android:src="@drawable/ic_home"
+                            android:background="@android:drawable/btn_default"
+                            android:contentDescription="@string/action_pay"
+                            app:tint="#000000" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8.dp"
+                            android:text="@string/action_pay"
+                            android:textSize="12sp"
+                            android:textColor="#4B5563" />
+                    </LinearLayout>
+
+                    <!-- Botão Transferir -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="16.dp">
+                        <ImageView
+                            android:id="@+id/iv_action_transfer_xml"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:padding="16.dp"
+                            android:src="@drawable/ic_favorite"
+                            android:background="@android:drawable/btn_default"
+                            android:contentDescription="@string/action_transfer"
+                            app:tint="#000000" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8.dp"
+                            android:text="@string/action_transfer"
+                            android:textSize="12sp"
+                            android:textColor="#4B5563" />
+                    </LinearLayout>
+
                 </LinearLayout>
             </HorizontalScrollView>
 
-            <!-- Seção de Atividades -->
+            <!-- 4. Resumo Financeiro -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16.dp"
-                android:layout_marginTop="32.dp"
-                android:text="Atividades recentes"
+                android:layout_marginTop="16.dp"
+                android:text="@string/label_financial_summary"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16.dp"
+                app:cardCornerRadius="12.dp"
+                app:cardElevation="2.dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16.dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_expense_chart"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="8.dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="12dp"
+                        android:background="#00E676" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- 5. Atividades Recentes -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16.dp"
+                android:layout_marginTop="16.dp"
+                android:text="@string/label_recent_activities"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_transactions_xml"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16.dp"
-                android:paddingStart="16.dp"
-                android:paddingEnd="16.dp"
+                android:layout_marginTop="12.dp"
+                android:paddingHorizontal="16.dp"
                 tools:listitem="@android:layout/simple_list_item_2" />
 
         </LinearLayout>
