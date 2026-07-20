@@ -24,12 +24,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.bankpage.data.Transaction
-import com.example.bankpage.ui.components.ActionButtons
-import com.example.bankpage.ui.components.BalanceCard
-import com.example.bankpage.ui.components.BankIcons
-import com.example.bankpage.ui.components.ExpenseCategoryChart
-import com.example.bankpage.ui.components.SavingsGoals
-import com.example.bankpage.ui.components.TransactionList
+
+
+
+
+
+
+
+
+import com.example.bankpage.ui.BankViewModel
+import com.example.bankpage.ui.components.*
 import com.example.bankpage.ui.theme.BANKPAGETheme
 
 class MainActivity : ComponentActivity() {
