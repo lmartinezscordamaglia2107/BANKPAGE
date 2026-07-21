@@ -33,6 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.androidx.compose.koinViewModel
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -58,7 +61,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun BANKPAGEApp(
-    viewModel: BankViewModel = viewModel(),
+    viewModel: BankViewModel = koinViewModel(),
     navController: NavHostController = rememberNavController()
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -101,13 +104,25 @@ fun BANKPAGEApp(
             NavHost(
                 navController = navController,
                 startDestination = AppDestinations.HOME.route,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(innerPadding),
+                enterTransition = {
+                    slideInHorizontally(animationSpec = tween(400)) { it } + fadeIn(tween(400))
+                },
+                exitTransition = {
+                    slideOutHorizontally(animationSpec = tween(400)) { -it } + fadeOut(tween(400))
+                },
+                popEnterTransition = {
+                    slideInHorizontally(animationSpec = tween(400)) { -it } + fadeIn(tween(400))
+                },
+                popExitTransition = {
+                    slideOutHorizontally(animationSpec = tween(400)) { it } + fadeOut(tween(400))
+                }
             ) {
                 composable(AppDestinations.HOME.route) {
                     HomeScreen(
                         balance = viewModel.balance,
                         limit = viewModel.limit,
-                        transactions = viewModel.transactions,
+                        transactions = viewModel.transactions.collectAsState().value,
                         onNavigateToPix = { navController.navigate(AppDestinations.PIX.route) }
                     )
                 }
