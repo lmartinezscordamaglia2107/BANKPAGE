@@ -16,7 +16,10 @@ import androidx.compose.ui.unit.sp
 import com.example.bankpage.R
 
 @Composable
-fun ActionButtons(modifier: Modifier = Modifier) {
+fun ActionButtons(
+    modifier: Modifier = Modifier,
+    onActionClick: (String) -> Unit = {}
+) {
     val actions = listOf(
         BankIcon(stringResource(R.string.action_pix), BankIcons.Pix),
         BankIcon(stringResource(R.string.action_pay), BankIcons.Pagar),
@@ -31,19 +34,19 @@ fun ActionButtons(modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(actions) { action ->
-            ActionButtonItem(action)
+            ActionButtonItem(action, onClick = { onActionClick(action.label) })
         }
     }
 }
 
 @Composable
-fun ActionButtonItem(action: BankIcon) {
+fun ActionButtonItem(action: BankIcon, onClick: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.width(75.dp)
     ) {
         Surface(
-            onClick = { /* Ação do clique */ },
+            onClick = onClick,
             shape = CircleShape,
             color = Color(0xFFF3F4F6),
             modifier = Modifier.size(60.dp)

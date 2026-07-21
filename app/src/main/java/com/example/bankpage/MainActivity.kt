@@ -11,13 +11,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.*
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,10 +28,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.bankpage.data.Contact
 import com.example.bankpage.data.Transaction
 import com.example.bankpage.ui.BankViewModel
@@ -48,41 +57,79 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun BANKPAGEApp(viewModel: BankViewModel = viewModel()) {
-    var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
+fun BANKPAGEApp(
+    viewModel: BankViewModel = viewModel(),
+    navController: NavHostController = rememberNavController()
+) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestinationRoute = navBackStackEntry?.destination?.route
+
+    val showBottomBar = AppDestinations.entries.any { it.route == currentDestinationRoute && it.showInBottomBar }
+    val adaptiveInfo = currentWindowAdaptiveInfo()
 
     NavigationSuiteScaffold(
+        layoutType = if (!showBottomBar) {
+            NavigationSuiteType.None
+        } else {
+            NavigationSuiteType.NavigationBar
+        },
         navigationSuiteItems = {
-            AppDestinations.entries.forEach {
+            AppDestinations.entries.filter { it.showInBottomBar }.forEach { destination ->
                 item(
                     icon = {
                         Icon(
-                            painterResource(it.icon),
-                            contentDescription = it.label
+                            painterResource(destination.icon),
+                            contentDescription = destination.label
                         )
                     },
-                    label = { Text(it.label) },
-                    selected = it == currentDestination,
-                    onClick = { currentDestination = it }
+                    label = { Text(destination.label) },
+                    selected = currentDestinationRoute == destination.route,
+                    onClick = {
+                        navController.navigate(destination.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
             }
         }
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            when (currentDestination) {
-                AppDestinations.HOME -> HomeScreen(
-                    balance = viewModel.balance,
-                    limit = viewModel.limit,
-                    transactions = viewModel.transactions,
-                    modifier = Modifier.padding(innerPadding)
-                )
-                AppDestinations.FAVORITES -> FavoritesScreen(
-                    onSendMoney = { contact ->
-                        viewModel.addTransaction("Para ${contact.name}", 50.0, true)
-                    },
-                    modifier = Modifier.padding(innerPadding)
-                )
-                AppDestinations.PROFILE -> ProfileScreen(modifier = Modifier.padding(innerPadding))
+            NavHost(
+                navController = navController,
+                startDestination = AppDestinations.HOME.route,
+                modifier = Modifier.padding(innerPadding)
+            ) {
+                composable(AppDestinations.HOME.route) {
+                    HomeScreen(
+                        balance = viewModel.balance,
+                        limit = viewModel.limit,
+                        transactions = viewModel.transactions,
+                        onNavigateToPix = { navController.navigate(AppDestinations.PIX.route) }
+                    )
+                }
+                composable(AppDestinations.FAVORITES.route) {
+                    FavoritesScreen(
+                        onSendMoney = { contact ->
+                            viewModel.addTransaction("Para ${contact.name}", 50.0, true)
+                        }
+                    )
+                }
+                composable(AppDestinations.PROFILE.route) {
+                    ProfileScreen()
+                }
+                composable(AppDestinations.PIX.route) {
+                    PixScreen(
+                        onBack = { navController.popBackStack() },
+                        onConfirmPix = { key, value ->
+                            viewModel.addTransaction("Pix para $key", value, true)
+                            navController.popBackStack()
+                        }
+                    )
+                }
             }
         }
     }
@@ -93,15 +140,17 @@ fun HomeScreen(
     balance: Double,
     limit: Double,
     transactions: List<Transaction>,
+    onNavigateToPix: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val pixLabel = stringResource(R.string.action_pix)
+    
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(vertical = 16.dp)
     ) {
-        // Mensagem de Boas-vindas
         Text(
             text = stringResource(R.string.welcome_message),
             fontSize = 20.sp,
@@ -111,30 +160,24 @@ fun HomeScreen(
         
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Cartão de Saldo
-        BalanceCard(
-            balance = balance,
-            limit = limit
-        )
+        BalanceCard(balance = balance, limit = limit)
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Botões de Ação
-        ActionButtons()
+        ActionButtons(onActionClick = { label ->
+            if (label == pixLabel) onNavigateToPix()
+        })
         
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Gráfico de Gastos (NOVO)
         ExpenseCategoryChart()
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Metas de Poupança (NOVO)
         SavingsGoals()
 
         Spacer(modifier = Modifier.height(24.dp))
         
-        // Atividades recentes
         Text(
             text = stringResource(R.string.label_recent_activities),
             fontSize = 18.sp,
@@ -145,6 +188,67 @@ fun HomeScreen(
         Spacer(modifier = Modifier.height(16.dp))
         
         TransactionList(transactions = transactions)
+    }
+}
+
+@Composable
+fun PixScreen(
+    onBack: () -> Unit,
+    onConfirmPix: (String, Double) -> Unit
+) {
+    var pixKey by remember { mutableStateOf("") }
+    var pixValue by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
+            }
+            Text(text = "Área Pix", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(text = "Chave Pix", fontWeight = FontWeight.SemiBold)
+        TextField(
+            value = pixKey,
+            onValueChange = { pixKey = it },
+            placeholder = { Text("CPF, E-mail, Celular ou Chave Aleatória") },
+            modifier = Modifier.fillMaxWidth(),
+            colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(text = "Valor", fontWeight = FontWeight.SemiBold)
+        TextField(
+            value = pixValue,
+            onValueChange = { pixValue = it },
+            placeholder = { Text("R$ 0,00") },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            colors = TextFieldDefaults.colors(focusedContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent)
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Button(
+            onClick = {
+                val value = pixValue.toDoubleOrNull() ?: 0.0
+                if (pixKey.isNotEmpty() && value > 0) {
+                    onConfirmPix(pixKey, value)
+                }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = pixKey.isNotEmpty() && pixValue.isNotEmpty(),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF00E676))
+        ) {
+            Text(text = "Transferir Agora", color = Color.Black)
+        }
     }
 }
 
@@ -189,7 +293,6 @@ fun ContactItem(contact: Contact, onSendMoney: () -> Unit) {
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Avatar circular com inicial
         Box(
             modifier = Modifier
                 .size(48.dp)
@@ -272,12 +375,15 @@ fun AppPreview() {
 }
 
 enum class AppDestinations(
+    val route: String,
     val label: String,
     val icon: Int,
+    val showInBottomBar: Boolean = true
 ) {
-    HOME("Home", R.drawable.ic_home),
-    FAVORITES("Favorites", R.drawable.ic_favorite),
-    PROFILE("Profile", R.drawable.ic_account_box),
+    HOME("home", "Home", R.drawable.ic_home),
+    FAVORITES("favorites", "Favorites", R.drawable.ic_favorite),
+    PROFILE("profile", "Profile", R.drawable.ic_account_box),
+    PIX("pix", "Pix", R.drawable.ic_favorite, showInBottomBar = false),
 }
 
 @Preview(showBackground = true)
@@ -289,7 +395,8 @@ fun HomeScreenPreview() {
             limit = 10000.00,
             transactions = listOf(
                 Transaction(1, "Compra Teste", 50.0, "Agora", true)
-            )
+            ),
+            onNavigateToPix = {}
         )
     }
 }
